@@ -1,5 +1,21 @@
 from microbit import *
-from data import Button, ButtonType
+import radio
+from data import ButtonMessage, CompassMessage
+
+# display.scroll("Select the id")
+# display.scroll("A increments")
+# display.scroll("B decrements")
+# display.scroll("A + B selects")
+
+id = 0
+while not (button_a.is_pressed() and button_b.is_pressed()):
+    display.show(str(id))
+
+    if button_a.was_pressed():
+        id += 1
+
+    if button_b.was_pressed():
+        id -= 1
 
 radio.on()
 radio.config(channel=2)
@@ -10,18 +26,20 @@ b_pressed = False
 while True:
     if button_a.is_pressed():
         if not a_pressed:
-            radio.send(Button(True, ButtonType.A).serialize())
+            radio.send(ButtonMessage(id, "A", True).serialize())
             a_pressed = True
     else:
         if a_pressed:
-            radio.send(Button(False, ButtonType.A).serialize())
+            radio.send(ButtonMessage(id, "A", False).serialize())
             a_pressed = False
 
     if button_b.is_pressed():
         if not b_pressed:
-            radio.send(Button(True, ButtonType.B).serialize())
+            radio.send(ButtonMessage(id, "B", True).serialize())
             b_pressed = True
     else:
         if b_pressed:
-            radio.send(Button(False, ButtonType.B).serialize())
+            radio.send(ButtonMessage(id, "B", False).serialize())
             b_pressed = False
+
+    radio.send(CompassMessage(id, compass.get_x(), compass.get_y(), compass.get_z()).serialize())
