@@ -9,7 +9,7 @@ radio.config(channel=2)
 uart.init(baudrate=115200)
 
 while True:
-    incoming = radio.receive()
+    incoming = radio.receive_bytes()
 
     if incoming:
         # TODO: Make the byte length of the length itself variable. For now, just don't send big messages. RIP.
