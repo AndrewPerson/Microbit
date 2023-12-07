@@ -28,6 +28,9 @@ a_pressed = False
 b_pressed = False
 
 while True:
+    if pin_logo.is_touched():
+        compass.calibrate()
+
     if button_a.is_pressed():
         if not a_pressed:
             radio.send(ButtonMessage(str(id), "A", True).serialize())
@@ -46,4 +49,4 @@ while True:
             radio.send(ButtonMessage(str(id), "B", False).serialize())
             b_pressed = False
 
-    radio.send(CompassMessage(str(id), compass.get_x(), compass.get_y(), compass.get_z()).serialize())
+    radio.send(CompassMessage(str(id), compass.heading()).serialize())

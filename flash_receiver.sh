@@ -1,1 +1,1 @@
-ufs put receiver.py main.py
+python3 -m microfs put receiver.py main.py

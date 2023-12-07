@@ -6,7 +6,7 @@ import os
 
 keyboard = Controller()
 
-with serial.Serial('/dev/ttyACM0', baudrate=115200) as ser:
+with serial.Serial('/dev/cu.usbmodem11402', baudrate=115200) as ser:
     ser.flush()
     while True:
         if ser.in_waiting > 0:
@@ -27,5 +27,12 @@ with serial.Serial('/dev/ttyACM0', baudrate=115200) as ser:
                     else:
                         keyboard.release(Key.down)
             elif isinstance(data, CompassMessage):
-                os.system("clear")
-                print(data.x, data.y, data.z)
+                if data.heading - 180 > 30:
+                    keyboard.press(Key.right)
+                    keyboard.release(Key.left)
+                elif data.heading - 180 < -30:
+                    keyboard.press(Key.left)
+                    keyboard.release(Key.right)
+                else:
+                    keyboard.release(Key.left)
+                    keyboard.release(Key.right)

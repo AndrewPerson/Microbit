@@ -68,20 +68,18 @@ class ButtonMessage(Message):
 
 
 class CompassMessage(Message):
-    def __init__(self, id: str, x: float, y: float, z: float):
+    def __init__(self, id: str, heading: float):
         super().__init__(id, self)
-        self.x = x
-        self.y = y
-        self.z = z
+        self.heading = heading
 
     @staticmethod
     def _deserialize_internal(id: str, data: bytes) -> "CompassMessage":
-        x, y, z = struct.unpack("fff", data)
+        (heading,) = struct.unpack("f", data)
 
-        return CompassMessage(id, x, y, z)
+        return CompassMessage(id, heading)
     
     def _serialize_internal(self) -> bytes:
-        return struct.pack("fff", self.x, self.y, self.z)
+        return struct.pack("f", self.heading)
 
 Message.register_type(ButtonMessage)
 Message.register_type(CompassMessage)
