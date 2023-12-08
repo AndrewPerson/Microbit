@@ -12,10 +12,12 @@ while not (button_a.is_pressed() and button_b.is_pressed()):
     display.show(str(id))
 
     if button_a.was_pressed():
-        id += 1
+        id -= 1
 
     if button_b.was_pressed():
-        id -= 1
+        id += 1
+    
+    id = id % 10
 
 display.show(Image.SKULL)
 

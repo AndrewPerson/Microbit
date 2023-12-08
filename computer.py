@@ -1,8 +1,13 @@
 from pynput.keyboard import Key, Controller
 import serial
 from data import Message, ButtonMessage, CompassMessage
-import os
+from mapping import Mapping
 
+
+mappings = {
+    "1": Mapping({ "A": Key.up, "B": Key.down }, Key.left, Key.right),
+    "2": Mapping({ "A": "w", "B": "s" }, "a", "d"),
+}
 
 keyboard = Controller()
 
@@ -18,21 +23,21 @@ with serial.Serial('/dev/cu.usbmodem11402', baudrate=115200) as ser:
             if isinstance(data, ButtonMessage):
                 if data.button == "A":
                     if data.pressed:
-                        keyboard.press(Key.up)
+                        keyboard.press(mappings[data.id].buttons["A"])
                     else:
-                        keyboard.release(Key.up)
+                        keyboard.release(mappings[data.id].buttons["A"])
                 elif data.button == "B":
                     if data.pressed:
-                        keyboard.press(Key.down)
+                        keyboard.press(mappings[data.id].buttons["B"])
                     else:
-                        keyboard.release(Key.down)
+                        keyboard.release(mappings[data.id].buttons["B"])
             elif isinstance(data, CompassMessage):
-                if data.heading - 180 > 30:
-                    keyboard.press(Key.right)
-                    keyboard.release(Key.left)
-                elif data.heading - 180 < -30:
-                    keyboard.press(Key.left)
-                    keyboard.release(Key.right)
+                if data.heading - 180 > 45:
+                    keyboard.press(mappings[data.id].right_rotation)
+                    keyboard.release(mappings[data.id].left_rotation)
+                elif data.heading - 180 < -45:
+                    keyboard.press(mappings[data.id].left_rotation)
+                    keyboard.release(mappings[data.id].right_rotation)
                 else:
-                    keyboard.release(Key.left)
-                    keyboard.release(Key.right)
+                    keyboard.release(mappings[data.id].left_rotation)
+                    keyboard.release(mappings[data.id].right_rotation)
